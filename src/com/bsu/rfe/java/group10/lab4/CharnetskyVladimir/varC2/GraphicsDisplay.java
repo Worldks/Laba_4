@@ -143,40 +143,42 @@ minY
     protected void paintGraphics(Graphics2D canvas) {
         canvas.setStroke(graphicsStroke);       // Выбрать линию для рисования графика
         canvas.setColor(Color.RED);         // Выбрать цвет линии
-        /* Будем рисовать линию графика как путь, состоящий из множества
-        сегментов (GeneralPath)
-        * Начало пути устанавливается в первую точку графика, после чего
-        прямой соединяется со
-        * следующими точками
-        */
         GeneralPath graphics = new GeneralPath();
         for (int i=0; i<graphicsData.length; i++) {
-            Point2D.Double point = xyToPoint(graphicsData[i][0], graphicsData[i][1]);// Преобразовать значения (x,y) в точку на экране point
+            Point2D.Double point = xyToPoint(graphicsData[i][0], graphicsData[i][1]);
             if (i>0) {
-                graphics.lineTo(point.getX(), point.getY());// Не первая итерация цикла - вести линию в точку point
+                graphics.lineTo(point.getX(), point.getY());
             } else {
-                graphics.moveTo(point.getX(), point.getY());// Первая итерация цикла - установить начало пути в точку point
+                graphics.moveTo(point.getX(), point.getY());
             }
         }
-        canvas.draw(graphics); // Отобразить график
+        canvas.draw(graphics); 
     }
-    // Отображение маркеров точек, по которым рисовался график
+
     protected void paintMarkers(Graphics2D canvas) {
-        canvas.setStroke(markerStroke); // Шаг 1 - Установить специальное перо для черчения контуров маркеров
-        canvas.setColor(Color.RED);// Выбрать красный цвета для контуров маркеров
-        canvas.setPaint(Color.RED);// Выбрать красный цвет для закрашивания маркеров внутри
-        // Шаг 2 - Организовать цикл по всем точкам графика
+        canvas.setStroke(markerStroke);
         for (Double[] point: graphicsData) {
-            Ellipse2D.Double marker = new Ellipse2D.Double();// Инициализировать эллипс как объект для представления маркера
-/* Эллипс будет задаваться посредством указания координат
-его центра
-и угла прямоугольника, в который он вписан */
-            Point2D.Double center = xyToPoint(point[0], point[1]);// Центр - в точке (x,y)
+
+            if (point[1].intValue()%2 == 0 && point[1].intValue() != 0)
+                canvas.setColor(Color.red);
+            else
+                canvas.setColor(Color.blue);
+
+            Point2D.Double center = xyToPoint(point[0], point[1]);
             GeneralPath path = new GeneralPath();
-            Point2D.Double corner = shiftPoint(center, 3, 3);// Угол прямоугольника - отстоит на расстоянии (3,3)
-            marker.setFrameFromCenter(center, corner);// Задать эллипс по центру и диагонали
-            canvas.draw(marker); // Начертить контур маркера
-            canvas.fill(marker); // Залить внутреннюю область маркера
+            path.moveTo(center.getX() - 5.5,center.getY());
+            path.lineTo(center.getX() + 5.5,center.getY());
+            path.moveTo(center.getX(),center.getY() - 5.5);
+            path.lineTo(center.getX(),center.getY() + 5.5);
+            path.moveTo(center.getX() - 2.75,center.getY() - 5.5);
+            path.lineTo(center.getX() + 2.75,center.getY() - 5.5);
+            path.moveTo(center.getX() - 2.75,center.getY() + 5.5);
+            path.lineTo(center.getX() + 2.75,center.getY() + 5.5);
+            path.moveTo(center.getX() - 5.5,center.getY() - 2.75);
+            path.lineTo(center.getX() - 5.5,center.getY() + 2.75);
+            path.moveTo(center.getX() + 5.5,center.getY() - 2.75);
+            path.lineTo(center.getX() + 5.5,center.getY() + 2.75);
+            canvas.draw(path); // Начертить контур маркера
         }
     }
     // Метод, обеспечивающий отображение осей координат

@@ -22,17 +22,13 @@ import javax.swing.event.MenuListener;
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame{
 
-    // Начальные размеры окна приложения
+
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
-    // Объект диалогового окна для выбора файлов
     private JFileChooser fileChooser = null;
-    // Пункты меню
     private JCheckBoxMenuItem showAxisMenuItem;
     private JCheckBoxMenuItem showMarkersMenuItem;
-    // Компонент-отображатель графика
     private GraphicsDisplay display = new GraphicsDisplay();
-    // Флаг, указывающий на загруженность данных графика
     private boolean fileLoaded = false;
 
     public MainFrame() {
@@ -60,8 +56,6 @@ public class MainFrame extends JFrame{
         menuBar.add(graphicsMenu);
         Action showAxisAction = new AbstractAction("Показывать оси координат") {// Создать действие для реакции на активацию элемента "Показывать оси координат"
             public void actionPerformed(ActionEvent event) {
-            // свойство showAxis класса GraphicsDisplay истина,если элемент меню
-            // showAxisMenuItem отмечен флажком, и ложь - в противном случае
             display.setShowAxis(showAxisMenuItem.isSelected());
             }
         };
@@ -126,7 +120,6 @@ Double.SIZE/8 байт;
         }
         }
     public static void main(String[] args) {
-        // Создать и показать экземпляр главного окна приложения
         MainFrame frame = new MainFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
