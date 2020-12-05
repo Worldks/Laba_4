@@ -25,8 +25,8 @@ public class MainFrame extends JFrame{
     // Начальные размеры окна приложения
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
-// Объект диалогового окна для выбора файлов
-private JFileChooser fileChooser = null;
+    // Объект диалогового окна для выбора файлов
+    private JFileChooser fileChooser = null;
     // Пункты меню
     private JCheckBoxMenuItem showAxisMenuItem;
     private JCheckBoxMenuItem showMarkersMenuItem;
@@ -34,71 +34,53 @@ private JFileChooser fileChooser = null;
     private GraphicsDisplay display = new GraphicsDisplay();
     // Флаг, указывающий на загруженность данных графика
     private boolean fileLoaded = false;
+
     public MainFrame() {
-// Вызов конструктора предка Frame
-        super("Построение графиков функций на основе заранее подготовленных файлов");
-// Установка размеров окна
-                setSize(WIDTH, HEIGHT);
+        super("Построение графиков функций на основе заранее подготовленных файлов");// Вызов конструктора предка Frame
+        setSize(WIDTH, HEIGHT);// Установка размеров окна
         Toolkit kit = Toolkit.getDefaultToolkit();
-// Отцентрировать окно приложения на экране
-        setLocation((kit.getScreenSize().width - WIDTH)/2,
-                (kit.getScreenSize().height - HEIGHT)/2);
-// Развѐртывание окна на весь экран
-        setExtendedState(MAXIMIZED_BOTH);
-// Создать и установить полосу меню
-        JMenuBar menuBar = new JMenuBar();
+        setLocation((kit.getScreenSize().width - WIDTH)/2, (kit.getScreenSize().height - HEIGHT)/2);// Отцентрировать окно приложения на экране
+        setExtendedState(MAXIMIZED_BOTH); // ---------Развѐртывание окна на весь экран--------
+        JMenuBar menuBar = new JMenuBar();// Создать и установить полосу меню
         setJMenuBar(menuBar);
-// Добавить пункт меню "Файл"
-        JMenu fileMenu = new JMenu("Файл");
+        JMenu fileMenu = new JMenu("Файл");// Добавить пункт меню "Файл"
         menuBar.add(fileMenu);
-// Создать действие по открытию файла
-        Action openGraphicsAction = new AbstractAction("Открыть файл с  графиком") {
-        public void actionPerformed(ActionEvent event) {
-            if (fileChooser==null) {
-                fileChooser = new JFileChooser();
-                fileChooser.setCurrentDirectory(new File("."));
+        Action openGraphicsAction = new AbstractAction("Открыть файл с  графиком") {   // Создать действие по открытию файла
+            public void actionPerformed(ActionEvent event) {
+                if (fileChooser==null) {
+                    fileChooser = new JFileChooser();
+                    fileChooser.setCurrentDirectory(new File("."));
+                }
+                if (fileChooser.showOpenDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION)
+                    openGraphics(fileChooser.getSelectedFile());
             }
-            if (fileChooser.showOpenDialog(MainFrame.this) ==
-                    JFileChooser.APPROVE_OPTION)
-                openGraphics(fileChooser.getSelectedFile());
-        }
-    };
-    // Добавить соответствующий элемент меню
-fileMenu.add(openGraphicsAction);
-    // Создать пункт меню "График"
-    JMenu graphicsMenu = new JMenu("График");
-menuBar.add(graphicsMenu);
-    // Создать действие для реакции на активацию элемента "Показывать оси координат"
-    Action showAxisAction = new AbstractAction("Показывать оси координат") {
-    public void actionPerformed(ActionEvent event) {
-// свойство showAxis класса GraphicsDisplay истина,если элемент меню
-// showAxisMenuItem отмечен флажком, и ложь - в противном случае
-        display.setShowAxis(showAxisMenuItem.isSelected());
-    }
-};
-showAxisMenuItem = new JCheckBoxMenuItem(showAxisAction);
-// Добавить соответствующий элемент в меню
-        graphicsMenu.add(showAxisMenuItem);
-        // Элемент по умолчанию включен (отмечен флажком)
-        showAxisMenuItem.setSelected(true);
-// Повторить действия для элемента "Показывать маркеры точек"
-        Action showMarkersAction = new AbstractAction("Показывать маркеры точек") {
-public void actionPerformed(ActionEvent event) {
-// по аналогии с showAxisMenuItem
-        display.setShowMarkers(showMarkersMenuItem.isSelected());
-        }
+        };
+        fileMenu.add(openGraphicsAction);    // Добавить соответствующий элемент меню
+        JMenu graphicsMenu = new JMenu("График");        // Создать пункт меню "График"
+        menuBar.add(graphicsMenu);
+        Action showAxisAction = new AbstractAction("Показывать оси координат") {// Создать действие для реакции на активацию элемента "Показывать оси координат"
+            public void actionPerformed(ActionEvent event) {
+            // свойство showAxis класса GraphicsDisplay истина,если элемент меню
+            // showAxisMenuItem отмечен флажком, и ложь - в противном случае
+            display.setShowAxis(showAxisMenuItem.isSelected());
+            }
+        };
+        showAxisMenuItem = new JCheckBoxMenuItem(showAxisAction);
+        graphicsMenu.add(showAxisMenuItem);    // Добавить соответствующий элемент в меню
+        showAxisMenuItem.setSelected(true);    // Элемент по умолчанию включен (отмечен флажком)
+        Action showMarkersAction = new AbstractAction("Показывать маркеры точек") {// Повторить действия для элемента "Показывать маркеры точек"
+            public void actionPerformed(ActionEvent event) {
+                display.setShowMarkers(showMarkersMenuItem.isSelected());// по аналогии с showAxisMenuItem
+            }
         };
         showMarkersMenuItem = new JCheckBoxMenuItem(showMarkersAction);
         graphicsMenu.add(showMarkersMenuItem);
-// Элемент по умолчанию включен (отмечен флажком)
-        showMarkersMenuItem.setSelected(true);
-// Зарегистрировать обработчик событий, связанных с меню "График"
-        graphicsMenu.addMenuListener(new GraphicsMenuListener());
-// Установить GraphicsDisplay в цент граничной компоновки
-        getContentPane().add(display, BorderLayout.CENTER);
-        }
+        showMarkersMenuItem.setSelected(true);// Элемент по умолчанию включен (отмечен флажком)
+        graphicsMenu.addMenuListener(new GraphicsMenuListener());// Зарегистрировать обработчик событий, связанных с меню "График"
+        getContentPane().add(display, BorderLayout.CENTER);// Установить GraphicsDisplay в цент граничной компоновки
+    }
 // Считывание данных графика из существующего файла
-protected void openGraphics(File selectedFile) {
+    protected void openGraphics(File selectedFile) {
         try {
 // Шаг 1 - Открыть поток чтения данных, связанный с входным файловым потоком
         DataInputStream in = new DataInputStream(new
@@ -143,25 +125,25 @@ Double.SIZE/8 байт;
         return;
         }
         }
-public static void main(String[] args) {
-// Создать и показать экземпляр главного окна приложения
+    public static void main(String[] args) {
+        // Создать и показать экземпляр главного окна приложения
         MainFrame frame = new MainFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-        }
-// Класс-слушатель событий, связанных с отображением меню
-private class GraphicsMenuListener implements MenuListener {
-    // Обработчик, вызываемый перед показом меню
-    public void menuSelected(MenuEvent e) {
-// Доступность или недоступность элементов меню "График" определяется загруженностью данных
-        showAxisMenuItem.setEnabled(fileLoaded);
-        showMarkersMenuItem.setEnabled(fileLoaded);
     }
+// Класс-слушатель событий, связанных с отображением меню
+    private class GraphicsMenuListener implements MenuListener {
+    // Обработчик, вызываемый перед показом меню
+        public void menuSelected(MenuEvent e) {
+// Доступность или недоступность элементов меню "График" определяется загруженностью данных
+            showAxisMenuItem.setEnabled(fileLoaded);
+            showMarkersMenuItem.setEnabled(fileLoaded);
+        }
     // Обработчик, вызываемый после того, как меню исчезло с экрана
     public void menuDeselected(MenuEvent e) {
-    }
+        }
 // Обработчик, вызываемый в случае отмены выбора пункта меню (очень редкая ситуация)
     public void menuCanceled(MenuEvent e) {
+        }
     }
-}
 }

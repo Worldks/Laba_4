@@ -36,31 +36,24 @@ public class GraphicsDisplay extends JPanel{
     // Различные шрифты отображения надписей
     private Font axisFont;
     public GraphicsDisplay() {
-// Цвет заднего фона области отображения - белый
-        setBackground(Color.WHITE);
-// Сконструировать необходимые объекты, используемые в рисовании
-// Перо для рисования графика
+        setBackground(Color.WHITE); // Цвет заднего фона области отображения - белый
+        // Сконструировать необходимые объекты, используемые в рисовании
         graphicsStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_ROUND, 10.0f, null, 0.0f);
-// Перо для рисования осей координат
+                BasicStroke.JOIN_ROUND, 10.0f, new float [] {4,1,1,1,2,1,1,1}, 0.0f);     // Перо для рисования графика
         axisStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 10.0f, null, 0.0f);
-// Перо для рисования контуров маркеров
+                BasicStroke.JOIN_MITER, 10.0f, null, 0.0f);     // Перо для рисования осей координат
         markerStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 10.0f, null, 0.0f);
-// Шрифт для подписей осей координат
-        axisFont = new Font("Serif", Font.BOLD, 36);
+                BasicStroke.JOIN_MITER, 10.0f, null, 0.0f);     // Перо для рисования контуров маркеров
+        axisFont = new Font("Serif", Font.BOLD, 36);                         // Шрифт для подписей осей координат
     }
-// Данный метод вызывается из обработчика элемента меню "Открыть файл с графиком"
+    // Данный метод вызывается из обработчика элемента меню "Открыть файл с графиком"
     // главного окна приложения в случае успешной загрузки данных
     public void showGraphics(Double[][] graphicsData) {
-// Сохранить массив точек во внутреннем поле класса
-        this.graphicsData = graphicsData;
-// Запросить перерисовку компонента, т.е. неявно вызвать paintComponent()
-        repaint();
+        this.graphicsData = graphicsData;       // Сохранить массив точек во внутреннем поле класса
+        repaint();      // Запросить перерисовку компонента, т.е. неявно вызвать paintComponent()
     }
     // Методы-модификаторы для изменения параметров отображения графика
-// Изменение любого параметра приводит к перерисовке области
+    // Изменение любого параметра приводит к перерисовке области
     public void setShowAxis(boolean showAxis) {
         this.showAxis = showAxis;
         repaint();
@@ -116,15 +109,13 @@ public class GraphicsDisplay extends JPanel{
 * 3) Набросим по половине недостающего расстояния на maxY и
 minY
 */
-            double yIncrement = (getSize().getHeight()/scale - (maxY -
-                    minY))/2;
+            double yIncrement = (getSize().getHeight()/scale - (maxY - minY))/2;
             maxY += yIncrement;
             minY -= yIncrement;
         }
         if (scale==scaleY) {
 // Если за основу был взят масштаб по оси Y, действовать по аналогии
-            double xIncrement = (getSize().getWidth()/scale - (maxX -
-                    minX))/2;
+            double xIncrement = (getSize().getWidth()/scale - (maxX - minX))/2;
             maxX += xIncrement;
             minX -= xIncrement;
         }
@@ -150,89 +141,65 @@ minY
     }
     // Отрисовка графика по прочитанным координатам
     protected void paintGraphics(Graphics2D canvas) {
-// Выбрать линию для рисования графика
-        canvas.setStroke(graphicsStroke);
-// Выбрать цвет линии
-        canvas.setColor(Color.RED);
-/* Будем рисовать линию графика как путь, состоящий из множества
-сегментов (GeneralPath)
-* Начало пути устанавливается в первую точку графика, после чего
-прямой соединяется со
-* следующими точками
-*/
+        canvas.setStroke(graphicsStroke);       // Выбрать линию для рисования графика
+        canvas.setColor(Color.RED);         // Выбрать цвет линии
+        /* Будем рисовать линию графика как путь, состоящий из множества
+        сегментов (GeneralPath)
+        * Начало пути устанавливается в первую точку графика, после чего
+        прямой соединяется со
+        * следующими точками
+        */
         GeneralPath graphics = new GeneralPath();
         for (int i=0; i<graphicsData.length; i++) {
-// Преобразовать значения (x,y) в точку на экране point
-            Point2D.Double point = xyToPoint(graphicsData[i][0],
-                    graphicsData[i][1]);
+            Point2D.Double point = xyToPoint(graphicsData[i][0], graphicsData[i][1]);// Преобразовать значения (x,y) в точку на экране point
             if (i>0) {
-// Не первая итерация цикла - вести линию в точку point
-                graphics.lineTo(point.getX(), point.getY());
+                graphics.lineTo(point.getX(), point.getY());// Не первая итерация цикла - вести линию в точку point
             } else {
-// Первая итерация цикла - установить начало пути в точку point
-                graphics.moveTo(point.getX(), point.getY());
+                graphics.moveTo(point.getX(), point.getY());// Первая итерация цикла - установить начало пути в точку point
             }
         }
-// Отобразить график
-        canvas.draw(graphics);
+        canvas.draw(graphics); // Отобразить график
     }
     // Отображение маркеров точек, по которым рисовался график
     protected void paintMarkers(Graphics2D canvas) {
-// Шаг 1 - Установить специальное перо для черчения контуров маркеров
-        canvas.setStroke(markerStroke);
-// Выбрать красный цвета для контуров маркеров
-        canvas.setColor(Color.RED);
-// Выбрать красный цвет для закрашивания маркеров внутри
-        canvas.setPaint(Color.RED);
-// Шаг 2 - Организовать цикл по всем точкам графика
+        canvas.setStroke(markerStroke); // Шаг 1 - Установить специальное перо для черчения контуров маркеров
+        canvas.setColor(Color.RED);// Выбрать красный цвета для контуров маркеров
+        canvas.setPaint(Color.RED);// Выбрать красный цвет для закрашивания маркеров внутри
+        // Шаг 2 - Организовать цикл по всем точкам графика
         for (Double[] point: graphicsData) {
-// Инициализировать эллипс как объект для представления маркера
-            Ellipse2D.Double marker = new Ellipse2D.Double();
+            Ellipse2D.Double marker = new Ellipse2D.Double();// Инициализировать эллипс как объект для представления маркера
 /* Эллипс будет задаваться посредством указания координат
 его центра
 и угла прямоугольника, в который он вписан */
-// Центр - в точке (x,y)
-            Point2D.Double center = xyToPoint(point[0], point[1]);
-// Угол прямоугольника - отстоит на расстоянии (3,3)
-            Point2D.Double corner = shiftPoint(center, 3, 3);
-// Задать эллипс по центру и диагонали
-            marker.setFrameFromCenter(center, corner);
+            Point2D.Double center = xyToPoint(point[0], point[1]);// Центр - в точке (x,y)
+            GeneralPath path = new GeneralPath();
+            Point2D.Double corner = shiftPoint(center, 3, 3);// Угол прямоугольника - отстоит на расстоянии (3,3)
+            marker.setFrameFromCenter(center, corner);// Задать эллипс по центру и диагонали
             canvas.draw(marker); // Начертить контур маркера
             canvas.fill(marker); // Залить внутреннюю область маркера
         }
     }
     // Метод, обеспечивающий отображение осей координат
     protected void paintAxis(Graphics2D canvas) {
-// Установить особое начертание для осей
-        canvas.setStroke(axisStroke);
-// Оси рисуются чѐрным цветом
-        canvas.setColor(Color.BLACK);
-// Стрелки заливаются чѐрным цветом
-        canvas.setPaint(Color.BLACK);
-// Подписи к координатным осям делаются специальным шрифтом
-        canvas.setFont(axisFont);
-// Создать объект контекста отображения текста - для получения характеристик устройства (экрана)
-                FontRenderContext context = canvas.getFontRenderContext();
-// Определить, должна ли быть видна ось Y на графике
+        canvas.setStroke(axisStroke);   // Установить особое начертание для осей
+        canvas.setColor(Color.BLACK);   // Оси рисуются чѐрным цветом
+        canvas.setPaint(Color.BLACK);   // Стрелки заливаются чѐрным цветом
+        canvas.setFont(axisFont);   // Подписи к координатным осям делаются специальным шрифтом
+        FontRenderContext context = canvas.getFontRenderContext();// Создать объект контекста отображения текста - для получения характеристик устройства (экрана)
+        // Определить, должна ли быть видна ось Y на графике
         if (minX<=0.0 && maxX>=0.0) {
 // Она должна быть видна, если левая граница показываемой области (minX) <= 0.0,
                     // а правая (maxX) >= 0.0
 // Сама ось - это линия между точками (0, maxY) и (0, minY)
-                    canvas.draw(new Line2D.Double(xyToPoint(0, maxY),
-                            xyToPoint(0, minY)));
-// Стрелка оси Y
-            GeneralPath arrow = new GeneralPath();
-// Установить начальную точку ломаной точно на верхний конец оси Y
-            Point2D.Double lineEnd = xyToPoint(0, maxY);
+            canvas.draw(new Line2D.Double(xyToPoint(0, maxY), xyToPoint(0, minY)));
+            GeneralPath arrow = new GeneralPath();      // Стрелка оси Y
+            Point2D.Double lineEnd = xyToPoint(0, maxY);// Установить начальную точку ломаной точно на верхний конец оси Y
             arrow.moveTo(lineEnd.getX(), lineEnd.getY());
-// Вести левый "скат" стрелки в точку с относительными координатами (5,20)
-            arrow.lineTo(arrow.getCurrentPoint().getX()+5,
-                    arrow.getCurrentPoint().getY()+20);
-// Вести нижнюю часть стрелки в точку с относительными координатами (-10, 0)
-            arrow.lineTo(arrow.getCurrentPoint().getX()-10,
-                    arrow.getCurrentPoint().getY());
-// Замкнуть треугольник стрелки
-            arrow.closePath();
+            // Вести левый "скат" стрелки в точку с относительными координатами (5,20)
+            arrow.lineTo(arrow.getCurrentPoint().getX()+5, arrow.getCurrentPoint().getY()+20);
+            // Вести нижнюю часть стрелки в точку с относительными координатами (-10, 0)
+            arrow.lineTo(arrow.getCurrentPoint().getX()-10, arrow.getCurrentPoint().getY());
+            arrow.closePath();  // Замкнуть треугольник стрелки
             canvas.draw(arrow); // Нарисовать стрелку
             canvas.fill(arrow); // Закрасить стрелку
 // Нарисовать подпись к оси Y
@@ -243,14 +210,12 @@ minY
             canvas.drawString("y", (float)labelPos.getX() + 10,
                     (float)(labelPos.getY() - bounds.getY()));
         }
-// Определить, должна ли быть видна ось X на графике
+        // Определить, должна ли быть видна ось X на графике
         if (minY<=0.0 && maxY>=0.0) {
 // Она должна быть видна, если верхняя граница показываемой области (maxX) >= 0.0,
 // а нижняя (minY) <= 0.0
-                    canvas.draw(new Line2D.Double(xyToPoint(minX, 0),
-                            xyToPoint(maxX, 0)));
-// Стрелка оси X
-            GeneralPath arrow = new GeneralPath();
+            canvas.draw(new Line2D.Double(xyToPoint(minX, 0), xyToPoint(maxX, 0)));
+            GeneralPath arrow = new GeneralPath();  // Стрелка оси X
 // Установить начальную точку ломаной точно на правый конец оси X
             Point2D.Double lineEnd = xyToPoint(maxX, 0);
             arrow.moveTo(lineEnd.getX(), lineEnd.getY());
@@ -260,8 +225,7 @@ minY
 // Вести левую часть стрелки в точку с относительными координатами (0, 10)
             arrow.lineTo(arrow.getCurrentPoint().getX(),
                     arrow.getCurrentPoint().getY()+10);
-// Замкнуть треугольник стрелки
-            arrow.closePath();
+            arrow.closePath();  // Замкнуть треугольник стрелки
             canvas.draw(arrow); // Нарисовать стрелку
             canvas.fill(arrow); // Закрасить стрелку
 // Нарисовать подпись к оси X
@@ -281,22 +245,17 @@ minY
     * maxY - самое "верхнее" значение Y.
     */
     protected Point2D.Double xyToPoint(double x, double y) {
-// Вычисляем смещение X от самой левой точки (minX)
-        double deltaX = x - minX;
-// Вычисляем смещение Y от точки верхней точки (maxY)
-        double deltaY = maxY - y;
+        double deltaX = x - minX;       // Вычисляем смещение X от самой левой точки (minX)
+        double deltaY = maxY - y;       // Вычисляем смещение Y от точки верхней точки (maxY)
         return new Point2D.Double(deltaX*scale, deltaY*scale);
     }
     /* Метод-помощник, возвращающий экземпляр класса Point2D.Double
-     * смещѐнный по отношению к исходному на deltaX, deltaY
+     * смещённый по отношению к исходному на deltaX, deltaY
      * К сожалению, стандартного метода, выполняющего такую задачу, нет.
      */
-    protected Point2D.Double shiftPoint(Point2D.Double src, double deltaX,
-                                        double deltaY) {
-// Инициализировать новый экземпляр точки
-        Point2D.Double dest = new Point2D.Double();
-// Задать еѐ координаты как координаты существующей точки + заданные смещения
-        dest.setLocation(src.getX() + deltaX, src.getY() + deltaY);
+    protected Point2D.Double shiftPoint(Point2D.Double src, double deltaX, double deltaY) {
+        Point2D.Double dest = new Point2D.Double();     // Инициализировать новый экземпляр точки
+        dest.setLocation(src.getX() + deltaX, src.getY() + deltaY);     // Задать её координаты как координаты существующей точки + заданные смещения
         return dest;
     }
 
