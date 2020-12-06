@@ -25,11 +25,16 @@ public class MainFrame extends JFrame{
 
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
+
     private JFileChooser fileChooser = null;
+
     private JCheckBoxMenuItem showAxisMenuItem;
     private JCheckBoxMenuItem showMarkersMenuItem;
     private JCheckBoxMenuItem showCoordinateGridMenuItem;
+    private JCheckBoxMenuItem showLeft90DegreeRotationMenuItem;
+
     private GraphicsDisplay display = new GraphicsDisplay();
+
     private boolean fileLoaded = false;// Флаг, указывающей на загруженность данных графика
 
     public MainFrame() {
@@ -84,6 +89,17 @@ public class MainFrame extends JFrame{
         graphicsMenu.add(showCoordinateGridMenuItem);
         showCoordinateGridMenuItem.setEnabled(false);
 
+        // Создать действие для "Повернуть график на 90 градусов налево"
+        Action showLeft90DegreeRotationAction = new AbstractAction("Повернуть график на 90 градусов налево") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                display.setShowLeft90DegreeRotation(showLeft90DegreeRotationMenuItem.isSelected());
+            }
+        };
+        showLeft90DegreeRotationMenuItem= new JCheckBoxMenuItem(showLeft90DegreeRotationAction);
+        graphicsMenu.add(showLeft90DegreeRotationMenuItem);
+        showCoordinateGridMenuItem.setEnabled(false);
+        
         graphicsMenu.addMenuListener(new GraphicsMenuListener());// Зарегистрировать обработчик событий, связанных с меню "График"
         getContentPane().add(display, BorderLayout.CENTER);// Установить GraphicsDisplay в цент граничной компоновки
 

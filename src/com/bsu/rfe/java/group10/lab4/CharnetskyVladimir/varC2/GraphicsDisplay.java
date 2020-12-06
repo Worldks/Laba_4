@@ -13,6 +13,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import javax.swing.JPanel;
+import java.awt.geom.*;//for AffineTransform in 90 turn
 
 @SuppressWarnings("serial")
 public class GraphicsDisplay extends JPanel{
@@ -21,6 +22,7 @@ public class GraphicsDisplay extends JPanel{
     private boolean showAxis = true;
     private boolean showMarkers = false;
     private boolean showCoordinateGrid = false;
+    private boolean showLeft90DegreeRotation = false;
     // Границы диапазона пространства, подлежащего отображению
     private double minX;
     private double maxX;
@@ -70,6 +72,11 @@ public class GraphicsDisplay extends JPanel{
 
     public void setShowCoordinateGrid(boolean showCoordinateGrid){
         this.showCoordinateGrid = showCoordinateGrid;
+        repaint();
+    }
+
+    public void setShowLeft90DegreeRotation(boolean showLeft90DegreeRotation){
+        this.showLeft90DegreeRotation=showLeft90DegreeRotation;
         repaint();
     }
 
@@ -195,6 +202,15 @@ public class GraphicsDisplay extends JPanel{
             path.lineTo(center.getX() + 5.5,center.getY() + 2.75);
             canvas.draw(path); // Начертить контур маркера
         }
+    }
+
+    public void turnLeft90(Graphics2D canvas){
+        // матрица перехода плюс смещенные координатны начальной точки
+        double w=getWidth();
+        double h=getHeight();
+        AffineTransform at = new AffineTransform(0,-1*(h/w),1*(w/h),0,0,getHeight());
+        canvas.transform(at);
+
     }
 
     // Реализация отображения сетки
@@ -367,6 +383,7 @@ minY
 // Шаг 8 - В нужном порядке вызвать методы отображения элементов графика
 // Порядок вызова методов имеет значение, т.к. предыдущий рисунок будет затираться последующим
 // Первыми (если нужно) отрисовываются оси координат.
+        if (showLeft90DegreeRotation) turnLeft90(canvas);
         if (showAxis) paintAxis(canvas);
 // Затем отображается сам график
         paintGraphics(canvas);
