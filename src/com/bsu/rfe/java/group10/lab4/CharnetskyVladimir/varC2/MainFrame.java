@@ -79,7 +79,7 @@ public class MainFrame extends JFrame{
         graphicsMenu.add(showMarkersMenuItem);
         showMarkersMenuItem.setSelected(false);// Элемент по умолчанию включен (отмечен флажком)
 
-        // Создать действие для рекции на "Показывать координатную сетку"----------------------------------------------
+        // Создать действие для рекции на "Показывать координатную сетку"
         Action showCoordinateGridAction = new AbstractAction("Показывать координатную сетку") {
             public void actionPerformed(ActionEvent e) {
                 display.setShowCoordinateGrid(showCoordinateGridMenuItem.isSelected());
@@ -99,7 +99,7 @@ public class MainFrame extends JFrame{
         showLeft90DegreeRotationMenuItem= new JCheckBoxMenuItem(showLeft90DegreeRotationAction);
         graphicsMenu.add(showLeft90DegreeRotationMenuItem);
         showCoordinateGridMenuItem.setEnabled(false);
-        
+
         graphicsMenu.addMenuListener(new GraphicsMenuListener());// Зарегистрировать обработчик событий, связанных с меню "График"
         getContentPane().add(display, BorderLayout.CENTER);// Установить GraphicsDisplay в цент граничной компоновки
 

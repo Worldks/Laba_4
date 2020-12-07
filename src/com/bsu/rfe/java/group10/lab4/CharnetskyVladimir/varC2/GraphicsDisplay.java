@@ -13,7 +13,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import javax.swing.JPanel;
-import java.awt.geom.*;//for AffineTransform in 90 turn
+import java.awt.geom.*;//for AffineTransform
 
 @SuppressWarnings("serial")
 public class GraphicsDisplay extends JPanel{
@@ -45,7 +45,7 @@ public class GraphicsDisplay extends JPanel{
     public GraphicsDisplay() {
         setBackground(Color.WHITE); // Цвет заднего фона области отображения - белый
         graphicsStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_ROUND, 10.0f, new float [] {4,1,1,1,2,1,1,1}, 0.0f);     // Перо для рисования графика
+                BasicStroke.JOIN_ROUND, 10.0f, new float [] {6,6}, 0.0f);     // Перо для рисования графика
         axisStroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT,
                 BasicStroke.JOIN_MITER, 10.0f, null, 0.0f);     // Перо для рисования осей координат
         markerStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
@@ -76,7 +76,7 @@ public class GraphicsDisplay extends JPanel{
     }
 
     public void setShowLeft90DegreeRotation(boolean showLeft90DegreeRotation){
-        this.showLeft90DegreeRotation=showLeft90DegreeRotation;
+        this.showLeft90DegreeRotation = showLeft90DegreeRotation;
         repaint();
     }
 
@@ -149,6 +149,13 @@ public class GraphicsDisplay extends JPanel{
             canvas.drawString("y", (float)labelPos.getX() + 10,
                     (float)(labelPos.getY() - bounds.getY()));
         }
+        //------------------------------------------------------------------------------
+        Rectangle2D bs = axisFont.getStringBounds(stringNumberWithoutTrash(0.0),context);
+        Point2D.Double labelPos_1 = xyToPoint(0,0);
+        // Вывести надписи в точке с вычисленными координатами
+        canvas.drawString(stringNumberWithoutTrash(0.0),(float)labelPos_1.getX()+10,
+                (float)(labelPos_1.getY()-bs.getY()));
+        //------------------------------------------------------------------------------
         // Определить, должна ли быть видна ось X на графике
         if (minY<=0.0 && maxY>=0.0) {
 // Она должна быть видна, если верхняя граница показываемой области (maxX) >= 0.0,
@@ -206,11 +213,10 @@ public class GraphicsDisplay extends JPanel{
 
     public void turnLeft90(Graphics2D canvas){
         // матрица перехода плюс смещенные координатны начальной точки
-        double w=getWidth();
-        double h=getHeight();
+        double w = getWidth();
+        double h = getHeight();
         AffineTransform at = new AffineTransform(0,-1*(h/w),1*(w/h),0,0,getHeight());
         canvas.transform(at);
-
     }
 
     // Реализация отображения сетки
@@ -289,9 +295,8 @@ public class GraphicsDisplay extends JPanel{
 
     // Метод помощник для строкового представления числа без мусора
     private String stringNumberWithoutTrash(Double number){
-
         String num = number.toString();
-        if(num.length()>10) {
+        if(num.length() > 10) {
             String returnNum = "";
             int i = 0;
             while (num.charAt(i) != '.') {
@@ -306,7 +311,7 @@ public class GraphicsDisplay extends JPanel{
             return returnNum;
         }else return num;
     }
-    // Метод-помощник для  //написания числа без мусора
+    // Метод-помощник для  нахождения ены деления
     private double findDivisionValue(double length){
         Double del = length/14;
         if(del>=1){
@@ -316,7 +321,7 @@ public class GraphicsDisplay extends JPanel{
         }else{
             String delS = del.toString();
             int i=2;
-            while(delS.charAt(i)=='0'){
+            while(delS.charAt(i) == '0'){
                 i++;
             }
             if(numberOfDecimalPlaces<i-1) {
